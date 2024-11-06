@@ -219,8 +219,8 @@ fn main() {
     let mut var2 = 4;
     let ref_var2: &mut i32 = &mut var2;
     *ref_var2 += 2;
-
+    // println!("{}", var2); // won't compile, var2 is still being mutably borrowed here.
+    // var2 = 2; // won't compile either
     println!("{}", *ref_var2);
-
-    ref_var2;
+    // Either of the above lines will work here, the ref_var2 borrow is no longer active.
 }
