@@ -3,6 +3,11 @@ fn add2(x: i32, y: i32) -> i32 {
     x + y
 }
 
+#[allow(dead_code)]
+fn explicit_add2(x: i32, y: i32) -> i32 {
+    return x + y;
+}
+
 #[allow(unused_variables)]
 #[allow(unused_assignments)]
 #[allow(dead_code)]
@@ -43,6 +48,7 @@ fn main() {
     let x: (i32, &str, f64) = (1, "hello", 3.4);
 
     let (a, b, c) = x;
+    // let (left, right) = b.split_at(b.len()/2);
     println!("{} {} {}", a, b, c);
 
     println!("{}", x.1);
@@ -57,6 +63,9 @@ fn main() {
     struct Point2(i32, i32);
 
     let origin2 = Point2(0, 0);
+
+    struct TimeTravelGigawatts(f32);
+    let delorean = TimeTravelGigawatts(1.21);
 
     enum Direction {
         Left,
@@ -194,6 +203,8 @@ fn main() {
     *now_its_mine += 2;
 
     println!("{}", now_its_mine);
+    // println!("{}", mine); // this would not compile because `now_its_mine` now owns the pointer
+
 
     let mut var = 4;
     var = 3;
