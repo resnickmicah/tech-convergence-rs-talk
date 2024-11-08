@@ -12,6 +12,7 @@ fn explicit_add2(x: i32, y: i32) -> i32 {
 #[allow(unused_assignments)]
 #[allow(dead_code)]
 fn main() {
+    // Declaration, Initialization and numeric types
     let x: i32 = 1;
 
     let y: i32 = 13_i32;
@@ -26,16 +27,17 @@ fn main() {
     mutable = 4;
     mutable += 2;
 
+    // Strings and &strs
+    let f: f64 = 1.3_f64;
     let x: &str = "hello world!";
-
     println!("{} {}", f, x);
+    let h: String = "Hello".to_string();
+    let d: String = "Dan".to_string();
+    let b: String = "Beetlejuice Beetlejuice Beetlejuice".to_string();
+    let b_slice: &str = &b;
+    println!("{} {}", h, b_slice);
 
-    let s: String = "hello world".to_string();
-
-    let s_slice: &str = &s;
-
-    println!("{} {}", s, s_slice);
-
+    // Arrays and vectors
     let four_ints: [i32; 4] = [1, 2, 3, 4];
 
     let mut vector: Vec<i32> = vec![1, 2, 3, 4];
@@ -45,14 +47,17 @@ fn main() {
 
     println!("{:?} {:?}", vector, slice);
 
-    let x: (i32, &str, f64) = (1, "hello", 3.4);
+    // Tuples
+    let x: (i32, &str, f64) = (1, "yes no", 1.21);
 
-    let (a, b, c) = x;
-    // let (left, right) = b.split_at(b.len()/2);
-    println!("{} {} {}", a, b, c);
-
+    let (the_loneliest_number, hello_goodbye, gigawatts) = x;
+    let (you_say, i_say) = hello_goodbye.split_at(3);
+ 
+    println!("{} {} {}", the_loneliest_number, hello_goodbye, gigawatts);
+    println!("{} {}", i_say, you_say);
     println!("{}", x.1);
 
+    // Structs and Tuple Structs
     struct Point {
         x: i32,
         y: i32,
@@ -67,6 +72,7 @@ fn main() {
     struct TimeTravelGigawatts(f32);
     let delorean = TimeTravelGigawatts(1.21);
 
+    // C-style enums
     enum Direction {
         Left,
         Right,
@@ -76,6 +82,7 @@ fn main() {
 
     let up = Direction::Up;
 
+    // Enums with variants that contain values
     enum OptionalI32 {
         AnI32(i32),
         Nothing,
@@ -97,6 +104,7 @@ fn main() {
         fn bar(&self) -> &T {
             &self.bar
         }
+        // need to borrow
         fn bar_mut(&mut self) -> &mut T {
             &mut self.bar
         }
@@ -104,10 +112,7 @@ fn main() {
             self.bar
         }
     }
-
-    let a_foo = Foo { bar: 1 };
-    println!("{}", a_foo.bar());
-
+    // Traits
     trait Frobnicate<T> {
         fn frobnicate(self) -> Option<T>;
     }
@@ -117,10 +122,12 @@ fn main() {
             Some(self.bar)
         }
     }
-
     let another_foo = Foo { bar: 1 };
     println!("{:?}", another_foo.frobnicate());
+    // Also works, but not after the first frobnicate call.
+    // println!("{:?}", Frobnicate::frobnicate(another_foo));
 
+    // Match expression and type keyword
     fn fibonacci(n: u32) -> u32 {
         match n {
             0 => 1,
@@ -132,6 +139,8 @@ fn main() {
     type FunctionPointer = fn(u32) -> u32;
 
     let fib: FunctionPointer = fibonacci;
+    // don't need to declare `type` here, functions are first class.
+    let fib: fn(u32) -> u32  = fibonacci;
     println!("Fib: {}", fib(4));
 
     let foo = OptionalI32::AnI32(1);
@@ -196,31 +205,37 @@ fn main() {
         break;
     }
 
-    let mut mine: Box<i32> = Box::new(3);
-    *mine = 5;
+    // Memory safety, transferring ownership
+    let mut joeys_box: Box<i32> = Box::new(3);
+    *joeys_box = 5;
+    let mut tommys_box_now = joeys_box;
+    *tommys_box_now += 2;
+ 
+    println!("{}", tommys_box_now);
+    // the below would not compile because `tommys_box_now` now owns the box
+    // println!("{}", joeys_box);
 
-    let mut now_its_mine = mine;
-    *now_its_mine += 2;
+    // Immutable references and borrowing
+    let mut magic_number = 4;
+    magic_number = 3;
+    let inspector_gadget: &i32 = &magic_number;
+    
+    println!("{}", magic_number);
+    println!("{}", inspector_gadget);
+    // magic_number = 2; // can't compile, inspector gadget has it
+    inspector_gadget;
+    // in the clear now, it isn't being borrow anymore
+    magic_number = 2;
 
-    println!("{}", now_its_mine);
-    // println!("{}", mine); // this would not compile because `now_its_mine` now owns the pointer
-
-
-    let mut var = 4;
-    var = 3;
-    let ref_var: &i32 = &var;
-
-    println!("{}", var);
-    println!("{}", *ref_var);
-
-    ref_var;
-    var = 2;
-
-    let mut var2 = 4;
-    let ref_var2: &mut i32 = &mut var2;
-    *ref_var2 += 2;
-    // println!("{}", var2); // won't compile, var2 is still being mutably borrowed here.
-    // var2 = 2; // won't compile either
-    println!("{}", *ref_var2);
-    // Either of the above lines will work here, the ref_var2 borrow is no longer active.
+    // mutably borrowing
+    let mut magic_number = 4;
+    let doctor_robotnik: &mut i32 = &mut magic_number;
+    *doctor_robotnik += 2;
+    // won't compile, magic_number is being mutably borrowed here.
+    // println!("{}", magic_number);
+    // magic_number = 2;
+    println!("{}", *doctor_robotnik);
+    // In the clear, doctor robotnik's borrow is no longer active.
+    magic_number = 2;
+    println!("{}", magic_number);
 }
